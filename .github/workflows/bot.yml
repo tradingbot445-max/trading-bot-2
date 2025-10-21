@@ -1,0 +1,26 @@
+name: Run Trading Bot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: pip install requests
+      
+    - name: Run Trading Bot
+      env:
+        CRYPTOPANITOKEN: ${{ secrets.CRYPTOPANITOKEN }}
+        EMAILPASSWORD: ${{ secrets.EMAILPASSWORD }}
+      run: python bot.py
