@@ -1,4 +1,4 @@
-print("🚀 Trading Bot Test - Simple Version")
+print("🚀 Trading Bot Test - Coinbase Version")
 print("=" * 40)
 
 import os
@@ -9,35 +9,41 @@ print("🔍 Checking environment variables...")
 print(f"CRYPTOPANIC: {'✅ FOUND' if os.getenv('CRYPTOPANITOKEN') else '❌ MISSING'}")
 print(f"EMAIL PASS: {'✅ FOUND' if os.getenv('EMAILPASSWORD') else '❌ MISSING'}")
 
-# Test 2: Simple Binance API test
-print("\n📈 Testing Binance API...")
+# Test 2: Use Coinbase API instead of Binance
+print("\n📈 Testing Crypto API (Coinbase)...")
 try:
-    # Use the most basic endpoint
-    url = "https://api.binance.com/api/v3/ping"
-    response = requests.get(url, timeout=10)
-    if response.status_code == 200:
-        print("✅ Binance API Connection: WORKING")
-    else:
-        print(f"❌ Binance API Status: {response.status_code}")
-except Exception as e:
-    print(f"❌ Binance API Error: {e}")
-
-# Test 3: Get actual price (simplified)
-print("\n💰 Getting BTC Price...")
-try:
-    url = "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT"
+    url = "https://api.coinbase.com/v2/prices/BTC-USD/spot"
     response = requests.get(url, timeout=10)
     if response.status_code == 200:
         data = response.json()
-        print(f"BTC Price Response: {data}")
-        if 'price' in data:
-            print(f"✅ BTC Price: ${float(data['price']):.2f}")
-        else:
-            print(f"❌ Price key missing: {data}")
+        btc_price = float(data['data']['amount'])
+        print(f"💰 BTC Price: ${btc_price:.2f}")
+        print("✅ Crypto API: WORKING")
     else:
-        print(f"❌ Price API Status: {response.status_code}")
+        print(f"❌ Crypto API Status: {response.status_code}")
 except Exception as e:
-    print(f"❌ Price API Error: {e}")
+    print(f"❌ Crypto API Error: {e}")
+
+# Test 3: Check multiple coins
+print("\n💰 Getting multiple coin prices...")
+coins = {
+    'BTC': 'BTC-USD',
+    'ETH': 'ETH-USD', 
+    'BNB': 'BNB-USD'
+}
+
+for coin, pair in coins.items():
+    try:
+        url = f"https://api.coinbase.com/v2/prices/{pair}/spot"
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            price = float(data['data']['amount'])
+            print(f"   {coin}: ${price:.2f}")
+        else:
+            print(f"   {coin}: ❌ API Error")
+    except Exception as e:
+        print(f"   {coin}: ❌ Error")
 
 # Test 4: Check CryptoPanic News API
 print("\n📰 Testing News API...")
